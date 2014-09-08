@@ -1,3 +1,3 @@
-# geojson-sse-map-random
+# earthquake-events-map
 
-Showing Random makers from a GeoJSON EventSource on a Leaflet map.
+Showing recent and live happening earthquakes on the globe.
