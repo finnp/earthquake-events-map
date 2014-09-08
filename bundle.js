@@ -14,16 +14,24 @@ var tiles = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 L.tileLayer(tiles, {
   maxZoom: 18,
   attribution: attribution
-}).addTo(map);
+}).addTo(map)
 
-var source = new EventSource('http://randomgeojson.herokuapp.com/')
+var source = new EventSource('http://usgs-earthquakes.herokuapp.com/api/changes?data=true&style=sse&tail=1&live=true')
 
-source.onmessage = function (messsage) {
-  var feature = JSON.parse(messsage.data)
-  console.log(feature)
-  var marker = L.marker(feature.geometry.coordinates)
-  marker.addTo(map);
-}
+var earthquakekeys = []
+
+source.addEventListener('data', function (messsage) {
+  var data = JSON.parse(messsage.data).value
+  if(data.coordinates && earthquakekeys.indexOf(data.key) < 0) {
+    earthquakekeys.push(data.key)
+    console.log('Add marker', data.coordinates)
+    var marker = L.marker(data.coordinates.reverse().slice(1))
+    var popover = ''
+    popover += data.place + '<br>'
+    popover += '<a href="' + data.url + '">More</a>'
+    marker.addTo(map).bindPopup(popover)
+  }
+})
 },{"leaflet":2}],2:[function(require,module,exports){
 /*
  Leaflet, a JavaScript library for mobile-friendly interactive maps. http://leafletjs.com
